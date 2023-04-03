@@ -2,39 +2,37 @@
  * <license header>
  */
 
-import React from "react"
-import ErrorBoundary from "react-error-boundary"
-
-import { HashRouter as Router, Routes, Route } from "react-router-dom"
-
-import ExtensionRegistration from "./ExtensionRegistration"
+import React from "react";
+import ErrorBoundary from "react-error-boundary";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import ExtensionRegistration from "./ExtensionRegistration";
 <%# "Add import statements for modals" -%>
-<% const allCustomButtons = extensionManifest.headerMenuButtons || [] -%>
-<% allCustomButtons.forEach((button) => { -%>
-  <% if (button.needsModal) { -%>
-    <% const modalFileName = button.label.replace(/ /g, '') + 'Modal' %>
-import <%- modalFileName %> from "./<%- modalFileName %>"
-<% }}) -%>
+<%_ const allCustomButtons = extensionManifest.headerMenuButtons || [] -%>
+<%_ allCustomButtons.forEach((button) => { -%>
+  <%_ if (button.needsModal) { -%>
+    <%_ const modalFileName = button.label.replace(/ /g, '') + 'Modal' -%>
+import <%- modalFileName %> from "./<%- modalFileName %>";
+<%_ }}) -%>
 
-function App(props) {
+function App() {
   return (
     <Router>
       <ErrorBoundary onError={onError} FallbackComponent={fallbackComponent}>
         <Routes>
           <Route index element={<ExtensionRegistration />} />
-          
           <Route
             exact path="index.html"
             element={<ExtensionRegistration />} 
           />
-          <% if (extensionManifest.headerMenuButtons) { -%>
-            <% extensionManifest.headerMenuButtons.forEach((button) => { -%>
-              <% if (button.needsModal) { %>
+          <%_ if (extensionManifest.headerMenuButtons) { -%>
+            <%_ extensionManifest.headerMenuButtons.forEach((button) => { -%>
+              <%_ if (button.needsModal) { -%>
           <Route
             exact path="<%- button.id %>-modal"
             element={<<%- button.label.replace(/ /g, '') %>Modal />}
           />
-          <% }})} %>
+          <%_ }})} -%>
+          <!-- YOUR CUSTOM ROUTES SHOULD BE HERE -->
         </Routes>
       </ErrorBoundary>
     </Router>
