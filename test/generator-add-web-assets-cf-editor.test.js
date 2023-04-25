@@ -50,7 +50,7 @@ function assertEnvContent (prevContent) {
  * @param {string} extensionManifest an extension manifest
  */
 function assertFiles (extensionManifest) {
-  // Asert generated web assets files
+  // Assert generated web assets files
   assert.file(`${webSrcFolder}/index.html`)
   assert.file(`${webSrcFolder}/src/exc-runtime.js`)
   assert.file(`${webSrcFolder}/src/index.css`)
@@ -62,9 +62,9 @@ function assertFiles (extensionManifest) {
   assert.file(`${webSrcFolder}/src/components/ExtensionRegistration.js`)
 
   // Assert generated modal files
-  const allCustomButtons = extensionManifest.headerMenuButtons || []
+  const headerMenuButtons = extensionManifest.headerMenuButtons || []
 
-  allCustomButtons.forEach((button) => {
+    headerMenuButtons.forEach((button) => {
     if (button.needsModal) {
       const modalFileName = button.label.replace(/ /g, '') + 'Modal'
       assert.file(`${webSrcFolder}/src/components/${modalFileName}.js`)
@@ -88,9 +88,9 @@ function assertFiles (extensionManifest) {
     '<script src="./src/index.js"'
   )
 
-  const allCustomButtons = extensionManifest.headerMenuButtons || []
+  const headerMenuButtons = extensionManifest.headerMenuButtons || []
 
-  allCustomButtons.forEach((button) => {
+    headerMenuButtons.forEach((button) => {
     if (button.needsModal) {
       const modalFileName = button.label.replace(/ /g, '') + 'Modal'
       

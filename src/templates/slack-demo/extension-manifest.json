@@ -1,7 +1,7 @@
 {
   "name": "Slack Import/Export Extension Demo",
   "id": "slack-import-export-extension-demo",
-  "description": "Demo Extension to showcase import/export functionality using custom buttons within AEM Content Fragment Console",
+  "description": "Demo Extension to showcase import/export functionality using custom buttons within AEM Content Fragment Editor",
   "version": "1.0.0",
   "templateFolder": "slack-demo",
   "headerMenuButtons": [
