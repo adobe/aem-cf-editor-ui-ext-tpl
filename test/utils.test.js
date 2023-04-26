@@ -63,6 +63,10 @@ describe('readManifest', () => {
 })
 
 describe('writeManifest', () => {
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
+
   test('should write the manifest to file', () => {
     const manifestPath = 'manifest.json'
     const manifest = { name: 'my-ext', version: '1.0.0' }
