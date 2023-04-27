@@ -152,7 +152,7 @@ class MainGenerator extends Generator {
     this.log(chalk.bold('2) You can use `aio app run` or `aio app deploy` to see the sample code files in action.'))
     if (this.extensionManifest.templateFolder) {
       this.log(chalk.bold('3) Please refer to the link below for configuring the demo application:'))
-      this.log(chalk.blue(chalk.bold(`   -> ${promptDocs['configureSlackDoc']}`)))
+      this.log(chalk.blue(chalk.bold(`   -> ${promptDocs['demoExtensionDoc']}`)))
     }
     this.log('\n')
   }

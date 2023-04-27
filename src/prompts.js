@@ -16,7 +16,7 @@ const path = require('path')
 
 const { readManifest } = require('./utils')
 
-const SLACK_DEMO_MANIFEST_PATH = path.join(__dirname, './templates/slack-demo/extension-manifest.json')
+const DEMO_MANIFEST_PATH = path.join(__dirname, './templates/chatgpt-demo/extension-manifest.json')
 
 var exitMenu = false
 
@@ -30,7 +30,7 @@ const briefOverviews = {
 
 const promptDocs = {
   mainDoc: "https://developer.adobe.com/uix/docs/",
-  configureSlackDoc: "https://developer.adobe.com/uix/docs/services/aem-cf-console-admin/code-generation/#configure-demo-application"
+  demoExtensionDoc: "TBD"
 }
 
 // Top Level prompts
@@ -236,18 +236,15 @@ const promptGuideMenu = (manifest) => {
     {
       name: "Try a demo project",
       value: () => {
-        const slackDemoManifest = readManifest(SLACK_DEMO_MANIFEST_PATH)
+        const demoManifest = readManifest(DEMO_MANIFEST_PATH)
 
         // Update the extension manifest object
-        manifest['name'] = slackDemoManifest['name'] || null
-        manifest['id'] = slackDemoManifest['id'] || null
-        manifest['description'] = slackDemoManifest['description'] || null
-        manifest['version'] = slackDemoManifest['version'] || null
-        manifest['templateFolder'] = slackDemoManifest['templateFolder'] || null
-        manifest['headerMenuButtons'] = slackDemoManifest['headerMenuButtons'] || null
-        manifest['runtimeActions'] = slackDemoManifest['runtimeActions'] || null
-        manifest['templateInputs'] = slackDemoManifest['templateInputs'] || null
-        manifest['templateDotEnvVars'] = slackDemoManifest['templateDotEnvVars'] || null
+        manifest['name'] = demoManifest['name'] || null
+        manifest['id'] = demoManifest['id'] || null
+        manifest['description'] = demoManifest['description'] || null
+        manifest['version'] = demoManifest['version'] || null
+        manifest['templateFolder'] = demoManifest['templateFolder'] || null
+        manifest['templateDotEnvVars'] = demoManifest['templateDotEnvVars'] || null
         exitMenu = true
 
         return Promise.resolve(true)
