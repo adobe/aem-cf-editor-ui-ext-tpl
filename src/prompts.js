@@ -234,7 +234,7 @@ const promptGuideMenu = (manifest) => {
   choices.push(
     new inquirer.Separator(),
     {
-      name: "Try a demo project",
+      name: "Try a demo project (based on React)",
       value: () => {
         const demoManifest = readManifest(DEMO_MANIFEST_PATH)
 
@@ -245,6 +245,7 @@ const promptGuideMenu = (manifest) => {
         manifest['version'] = demoManifest['version'] || null
         manifest['templateFolder'] = demoManifest['templateFolder'] || null
         manifest['templateDotEnvVars'] = demoManifest['templateDotEnvVars'] || null
+        manifest['isDemoExtension'] = demoManifest['isDemoExtension'] || false
         exitMenu = true
 
         return Promise.resolve(true)

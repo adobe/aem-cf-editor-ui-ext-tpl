@@ -12,13 +12,13 @@ governing permissions and limitations under the License.
 const Generator = require('yeoman-generator')
 const path = require('path')
 const upath = require('upath')
-// const fs = require('fs-extra')
 const chalk = require('chalk')
 
-const CFAdminActionGenerator = require('./generator-add-action-cf-editor')
-const CFAdminWebAssetsGenerator = require('./generator-add-web-assets-cf-editor')
+const ActionGenerator = require('./generators/action')
+const WebAssetsReactGenerator = require('./generators/web-assets-react')
+const DemoExtensionGenerator = require('./generators/demo-extension')
 
-const {constants, utils} = require('@adobe/generator-app-common-lib')
+const { constants, utils } = require('@adobe/generator-app-common-lib')
 const { runtimeManifestKey } = constants
 const { briefOverviews, promptTopLevelFields, promptMainMenu, promptDocs } = require('./prompts')
 const { readManifest, writeManifest } = require('./utils')
@@ -52,6 +52,7 @@ class MainGenerator extends Generator {
     this.webSrcFolder = path.join(this.extFolder, 'web-src')
     this.extConfigPath = path.join(this.extFolder, 'ext.config.yaml')
     this.configName = 'aem/cf-editor/1'
+    this.templatesFolder = '../templates'
 
     if (!this.options['is-test']) {
       this.extensionManifest = readManifest(EXTENSION_MANIFEST_PATH)
@@ -75,43 +76,58 @@ class MainGenerator extends Generator {
   }
 
   async writing () {
-    // generate the generic action
     if (this.extensionManifest.runtimeActions) {
+      // generate runtime actions
       this.extensionManifest.runtimeActions.forEach((action) => {
         this.composeWith({
-          Generator: CFAdminActionGenerator,
+          Generator: ActionGenerator,
           path: 'unknown'
         },
         {
-          // forward needed args
           'action-folder': this.actionFolder,
           'config-path': this.extConfigPath,
           'full-key-to-manifest': runtimeManifestKey,
           'action-name': action.name,
-          'extension-manifest': this.extensionManifest
+          'templates-folder': this.templatesFolder,
         })
       })
     }
 
     // generate the UI
-    this.composeWith({
-      Generator: CFAdminWebAssetsGenerator,
-      path: 'unknown'
-    }, 
-    {
-      'skip-prompt': this.options['skip-prompt'],
-      'web-src-folder': this.webSrcFolder,
-      'config-path': this.extConfigPath,
-      'extension-manifest': this.extensionManifest,
-    })
+    this.composeWith(
+      {
+        Generator: WebAssetsReactGenerator,
+        path: 'unknown'
+      },
+      {
+        'skip-prompt': this.options['skip-prompt'],
+        'web-src-folder': this.webSrcFolder,
+        'config-path': this.extConfigPath,
+        'extension-manifest': this.extensionManifest,
+        'templates-folder': this.templatesFolder,
+      }
+    )
+
+    if (this.extensionManifest.isDemoExtension) {
+      // generate demo extension
+      this.composeWith(
+          {
+            Generator: DemoExtensionGenerator,
+            path: 'unknown'
+          },
+          {
+            'skip-prompt': this.options['skip-prompt'],
+            'templates-folder': this.templatesFolder,
+            'extension-manifest': this.extensionManifest,
+          }
+      )
+    }
 
     const unixExtConfigPath = upath.toUnix(this.extConfigPath)
     // add the extension point config in root
     utils.writeKeyAppConfig(
       this,
-      // key
       'extensions.' + this.configName,
-      // value
       {
         // posix separator
         $include: unixExtConfigPath
@@ -122,8 +138,8 @@ class MainGenerator extends Generator {
     utils.writeKeyYAMLConfig(
       this,
       this.extConfigPath,
-      // key
-      'operations', {
+      'operations',
+      {
         view: [
           { type: 'web', impl: 'index.html' }
         ]
@@ -132,7 +148,7 @@ class MainGenerator extends Generator {
 
     // add actions path, relative to config file
     utils.writeKeyYAMLConfig(this, this.extConfigPath, 'actions', path.relative(this.extFolder, this.actionFolder))
-    
+
     // add web-src path, relative to config file
     utils.writeKeyYAMLConfig(this, this.extConfigPath, 'web', path.relative(this.extFolder, this.webSrcFolder))
   }
@@ -159,4 +175,3 @@ class MainGenerator extends Generator {
 }
 
 module.exports = MainGenerator
-

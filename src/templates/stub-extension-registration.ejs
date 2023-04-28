@@ -1,10 +1,12 @@
 /*
  * <license header>
  */
-
-import { Text } from "@adobe/react-spectrum";
-import { register } from "@adobe/uix-guest";
-import { extensionId } from "./Constants";
+import { Text } from "@adobe/react-spectrum"
+import { register } from "@adobe/uix-guest"
+import { extensionId } from "./Constants"
+<%_ if (extensionManifest.isDemoExtension) { -%>
+<%- include(extensionManifest.templateFolder + '/rte-getCustomButtons') -%>
+<%_ } -%>
 
 function ExtensionRegistration() {
   const init = async () => {
@@ -37,13 +39,18 @@ function ExtensionRegistration() {
             ];
           },
         },
+        <%_ } -%> <%# end of: if (extensionManifest.headerMenuButtons) %>
+        <%_ if (extensionManifest.isDemoExtension) { -%>
+        rte: {
+<%- include(extensionManifest.templateFolder + '/rte-getCustomButtons') -%>
+        }
         <%_ } -%>
-      },
-    });
-  };
-  init().catch(console.error);
+      }
+    })
+  }
+  init().catch(console.error)
 
-  return <Text>IFrame for integration with Host (AEM)...</Text>
+  return <Text>IFrame for integration with Host (AEM)...</Text>;
 }
 
 export default ExtensionRegistration;

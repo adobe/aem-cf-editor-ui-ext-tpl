@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Adobe. All rights reserved.
+Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,12 +10,13 @@ governing permissions and limitations under the License.
 */
 
 const path = require('path')
-const { constants, ActionGenerator, commonTemplates } = require('@adobe/generator-app-common-lib')
-// const { commonDependencyVersions } = constants
+const { ActionGenerator: ActionGeneratorCommon, commonTemplates } = require('@adobe/generator-app-common-lib')
 
-class CFAdminActionGenerator extends ActionGenerator {
+class ActionGenerator extends ActionGeneratorCommon {
   constructor (args, opts) {
     super(args, opts)
+
+    // props are used by templates
     this.props = {
       description: 'This is a sample action showcasing how to access an external API',
       // eslint-disable-next-line quotes
@@ -39,35 +40,14 @@ const { Core } = require('@adobe/aio-sdk')`,
       body: content
     }`
     }
-
     this.props['actionName'] = this.options['action-name']
     this.props['extensionManifest'] = this.options['extension-manifest']
   }
 
-  // async prompting () {
-  //   this.props.actionName = await this.promptForActionName('showcases how to access an external API', 'generic')
-  // }
-
   writing () {
     this.sourceRoot(path.join(__dirname, '.'))
 
-    // Generic Project
-    var templateActionPath = commonTemplates['stub-action']
-    var templateInputs = { 
-      LOG_LEVEL: 'debug',
-      API_ENDPOINT: '$API_ENDPOINT'
-    }
-    var templateDotEnvVars = ['API_ENDPOINT']
-    
-    // Demo Project
-    if (this.props.extensionManifest.templateFolder) {
-      templateActionPath = `./templates/${this.props.extensionManifest.templateFolder}/${this.props.actionName}-action.js`
-      templateInputs = this.props.extensionManifest.templateInputs || {}
-      templateDotEnvVars = this.props.extensionManifest.templateDotEnvVars || []
-    }
-
-    this.addAction(this.props.actionName, templateActionPath, {
-      // testFile: templates['stub-action.test'],
+    this.addAction(this.props.actionName, commonTemplates['stub-action'], {
       sharedLibFile: commonTemplates['utils'],
       sharedLibTestFile: commonTemplates['utils.test'],
       e2eTestFile: commonTemplates['stub-action.e2e'],
@@ -76,15 +56,18 @@ const { Core } = require('@adobe/aio-sdk')`,
         'node-fetch': '^2.6.0'
       },
       actionManifestConfig: {
-        inputs: templateInputs,
+        inputs: {
+          LOG_LEVEL: 'debug',
+          API_ENDPOINT: '$API_ENDPOINT'
+        },
         annotations: { 
           'final': true, 
           'require-adobe-auth': false 
         } // makes sure loglevel cannot be overwritten by request param
       },
-      dotenvStub: { label: 'Place your local environment variables here', vars: templateDotEnvVars }
+      dotenvStub: { label: 'Place your local environment variables here', vars: ['API_ENDPOINT'] }
     })
   }
 }
 
-module.exports = CFAdminActionGenerator
+module.exports = ActionGenerator
