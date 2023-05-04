@@ -1,0 +1,9 @@
+{
+  "name": "ChatGPT rich text editor sample extension",
+  "id": "chatgpt-editor-extension-demo",
+  "description": "The extensions adds ChatGPT support to rich text editor in CF Editor",
+  "version": "1.0.0",
+  "isDemoExtension": true,
+  "useReact": true,
+  "templateDotEnvVars": ["OPENAI_API_KEY", "OPENAI_ORG"]
+}

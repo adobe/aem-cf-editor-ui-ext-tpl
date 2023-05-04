@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Adobe. All rights reserved.
+Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -16,7 +16,7 @@ const path = require('path')
 
 const { readManifest } = require('./utils')
 
-const SLACK_DEMO_MANIFEST_PATH = path.join(__dirname, './templates/slack-demo/extension-manifest.json')
+const DEMO_MANIFEST_PATH = path.join(__dirname, './manifests/demo-extension-manifest.json')
 
 var exitMenu = false
 
@@ -30,7 +30,7 @@ const briefOverviews = {
 
 const promptDocs = {
   mainDoc: "https://developer.adobe.com/uix/docs/",
-  configureSlackDoc: "https://developer.adobe.com/uix/docs/services/aem-cf-console-admin/code-generation/#configure-demo-application"
+  demoExtensionDoc: "TBD"
 }
 
 // Top Level prompts
@@ -106,10 +106,6 @@ const promptMainMenu = (manifest) => {
     {
       name: "Add a custom button to Header Menu",
       value: nestedButtonPrompts.bind(this, manifest, 'headerMenuButtons'),
-    },
-    {
-      name: "Add server-side handler",
-      value: nestedActionPrompts.bind(this, manifest, 'runtimeActions')
     },
     new inquirer.Separator(),
     {
@@ -191,42 +187,6 @@ const modalPrompt = () => {
   }
 }
 
-// Prompts for action metadata
-const nestedActionPrompts = (manifest, manifestNodeName) => {
-  let actionName = 'generic'
-
-  return inquirer.prompt({
-    type: 'input',
-    name: 'actionName',
-    message: "Adobe I/O Runtime lets you invoke serverless code on demand. How would you like to name this action?",
-    default: actionName,
-    validate (input) {
-    // Must be a valid openwhisk action name, this is a simplified set see:
-    // https://github.com/apache/openwhisk/blob/master/docs/reference.md#entity-names
-      const valid = /^[a-zA-Z0-9][a-zA-Z0-9-]{2,31}$/
-      if (valid.test(input)) {
-        return true
-      }
-      return `'${input}' is not a valid action name, please make sure that:
-              The name has at least 3 characters or less than 33 characters.
-              The first character is an alphanumeric character.
-              The subsequent characters are alphanumeric.
-              The last character isn't a space.
-              Note: characters can only be split by '-'.`
-    }
-  })
-  .then((answer) => {
-    manifest[manifestNodeName] = manifest[manifestNodeName] || []
-    // manifest[manifestNodeName].push(answer.actionName)
-    manifest[manifestNodeName].push({
-      'name': answer.actionName
-    })
-  })
-  .catch((error) => {
-    console.error(error)
-  })
-}
-
 // Guide Menu Prompts
 const promptGuideMenu = (manifest) => {
   const choices = []
@@ -234,20 +194,18 @@ const promptGuideMenu = (manifest) => {
   choices.push(
     new inquirer.Separator(),
     {
-      name: "Try a demo project",
+      name: "Try a demo project based on React (ChatGPT support for Rich Text Editor)",
       value: () => {
-        const slackDemoManifest = readManifest(SLACK_DEMO_MANIFEST_PATH)
+        const demoManifest = readManifest(DEMO_MANIFEST_PATH)
 
         // Update the extension manifest object
-        manifest['name'] = slackDemoManifest['name'] || null
-        manifest['id'] = slackDemoManifest['id'] || null
-        manifest['description'] = slackDemoManifest['description'] || null
-        manifest['version'] = slackDemoManifest['version'] || null
-        manifest['templateFolder'] = slackDemoManifest['templateFolder'] || null
-        manifest['headerMenuButtons'] = slackDemoManifest['headerMenuButtons'] || null
-        manifest['runtimeActions'] = slackDemoManifest['runtimeActions'] || null
-        manifest['templateInputs'] = slackDemoManifest['templateInputs'] || null
-        manifest['templateDotEnvVars'] = slackDemoManifest['templateDotEnvVars'] || null
+        manifest['name'] = demoManifest['name'] || null
+        manifest['id'] = demoManifest['id'] || null
+        manifest['description'] = demoManifest['description'] || null
+        manifest['version'] = demoManifest['version'] || null
+        manifest['templateFolder'] = demoManifest['templateFolder'] || null
+        manifest['templateDotEnvVars'] = demoManifest['templateDotEnvVars'] || null
+        manifest['isDemoExtension'] = demoManifest['isDemoExtension'] || false
         exitMenu = true
 
         return Promise.resolve(true)
@@ -288,10 +246,6 @@ const promptGuideMenu = (manifest) => {
 const helpPrompts = () => {
   console.log('  Please refer to:')
   console.log(chalk.blue(chalk.bold(`  -> ${promptDocs['mainDoc']}`)) + '\n')
-}
-
-const dummyPrompt = () => {
-  console.log(chalk.blue(chalk.bold(`Please stay tuned for this feature!`)+ '\n'))
 }
 
 module.exports = {

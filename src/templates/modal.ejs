@@ -2,8 +2,8 @@
  * <license header>
  */
 
-import React, { useState, useEffect } from 'react'
-import { attach } from "@adobe/uix-guest"
+import React, { useState, useEffect } from "react";
+import { attach } from "@adobe/uix-guest";
 import {
   Flex,
   Form,
@@ -17,29 +17,29 @@ import {
   Button,
   Heading,
   View
-} from '@adobe/react-spectrum'
+} from "@adobe/react-spectrum";
 
-import Spinner from "./Spinner"
-import allActions from '../config.json'
-import actionWebInvoke from '../utils'
+import Spinner from "./Spinner";
+import allActions from "../config.json";
+import actionWebInvoke from "../utils";
 
-import { extensionId } from "./Constants"
+import { extensionId } from "./Constants";
 
 export default function <%- functionName %> () {
   // Fields
-  const [guestConnection, setGuestConnection] = useState()
+  const [guestConnection, setGuestConnection] = useState();
 
   useEffect(() => {
     (async () => {
-      const guestConnection = await attach({ id: extensionId })
+      const guestConnection = await attach({ id: extensionId });
 
-      setGuestConnection(guestConnection)
-    })()
-  }, [])
+      setGuestConnection(guestConnection);
+    })();
+  }, []);
 
   const onCloseHandler = () => {
-    guestConnection.host.modal.close()
-  }
+    guestConnection.host.modal.close();
+  };
 
   return (
     <Provider theme={defaultTheme} colorScheme='light'>
@@ -53,5 +53,5 @@ export default function <%- functionName %> () {
         </Flex>
       </Content>
     </Provider>
-  )
+  );
 }
