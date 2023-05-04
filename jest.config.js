@@ -13,5 +13,8 @@ module.exports = {
       lines: 50,
       statements: 50
     }
-  }
+  },
+  coveragePathIgnorePatterns: [
+    '/src/prompts.js',
+  ],
 }

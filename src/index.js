@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 const Generator = require('yeoman-generator');
 const path = require('path');
 const chalk = require('chalk');
-const { constants, utils } = require('@adobe/generator-app-common-lib');
+const { utils } = require('@adobe/generator-app-common-lib');
 const { readManifest, writeManifest } = require('./utils');
 const { briefOverviews, promptTopLevelFields, promptMainMenu, promptDocs } = require('./prompts');
 
@@ -46,7 +46,7 @@ class MainGenerator extends Generator {
     super(args, opts);
 
     this.option('skip-prompt', { default: false });
-    this.option('extension-manifest', { default: undefined });
+    this.option('extension-manifest', { type: Object, default: undefined });
   }
   
   initializing () {
