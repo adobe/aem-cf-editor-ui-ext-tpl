@@ -9,42 +9,41 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const Generator = require('yeoman-generator')
+const Generator = require('yeoman-generator');
 const { utils } = require("@adobe/generator-app-common-lib");
+const path = require("path");
 
+/**
+ * Generate some additional things related only to demo extension
+ */
 class DemoExtensionGenerator extends Generator {
   constructor (args, opts) {
-    super(args, opts)
-    this.option('templates-folder', { type: String })
+    super(args, opts);
 
-    // props are used by templates
-    this.props = {}
-    this.props['extensionManifest'] = this.options['extension-manifest']
-    this.props['projectName'] = utils.readPackageJson(this).name
+    this.option("extensionOptions", { type: Object });
   }
 
   writing () {
-    this._addDependencies()
-    // this._copyReadme()
+    this.addDependencies();
+    this.copyReadme();
   }
 
-  _addDependencies() {
+  addDependencies() {
     utils.addDependencies(this, {
       'openai': '^3.1.0'
-    })
+    });
   }
 
-  _copyReadme() {
-    console.log("===========");
-    console.log(`${this.options['templates-folder']}/${this.props.extensionManifest.templateFolder}/README.md`);
-
+  copyReadme() {
     this.fs.copyTpl(
-      this.templatePath(
-        `${this.options['templates-folder']}/${this.props.extensionManifest.templateFolder}/README.md`
+      this.templatePath(path.resolve(
+        `${__dirname}/../templates/${this.options.extensionOptions.demoExtensionTemplatesFolder}/README.md.ejs`)
       ),
       this.destinationPath('README.md'),
-      []
-    )
+      {
+        extensionManifest: this.options.extensionOptions.manifest,
+      }
+    );
   }
 }
 

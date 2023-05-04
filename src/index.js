@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Adobe. All rights reserved.
+Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -9,169 +9,141 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const Generator = require('yeoman-generator')
-const path = require('path')
-const upath = require('upath')
-const chalk = require('chalk')
+const Generator = require('yeoman-generator');
+const path = require('path');
+const chalk = require('chalk');
+const { constants, utils } = require('@adobe/generator-app-common-lib');
+const { readManifest, writeManifest } = require('./utils');
+const { briefOverviews, promptTopLevelFields, promptMainMenu, promptDocs } = require('./prompts');
 
-const ActionGenerator = require('./generators/action')
-const WebAssetsReactGenerator = require('./generators/web-assets-react')
-const DemoExtensionGenerator = require('./generators/demo-extension')
+const ConfigGenerator = require('./generators/config');
+const DependenciesGenerator = require('./generators/dependencies');
+const WebAssetsReactGenerator = require('./generators/web-assets-react');
+// generate some additional things related only to demo extension
+const DemoExtensionGenerator = require('./generators/demo-extension');
 
-const { constants, utils } = require('@adobe/generator-app-common-lib')
-const { runtimeManifestKey } = constants
-const { briefOverviews, promptTopLevelFields, promptMainMenu, promptDocs } = require('./prompts')
-const { readManifest, writeManifest } = require('./utils')
+const EXTENSION_MANIFEST_PATH = path.join(process.cwd(), 'extension-manifest.json');
+// Don't put it in the manifest to avoid binding the generation "result" to the knowledge of "how it was generated"
+const DEMO_EXTENSION_TEMPLATES_FOLDER = 'chatgpt-demo';
 
-const EXTENSION_MANIFEST_PATH = path.join(process.cwd(), 'extension-manifest.json')
-
-/*
-'initializing',
-'prompting',
-'configuring',
-'default',
-'writing',
-'conflicts',
-'install',
-'end'
-*/
-
+/**
+ * Possible hooks:
+ *
+ * initializing
+ * prompting
+ * configuring
+ * default
+ * writing
+ * conflicts
+ * install
+ * end
+ *
+ */
 class MainGenerator extends Generator {
+  extensionOptions = {};
+
   constructor (args, opts) {
-    super(args, opts)
-    
-    // options are inputs from CLI or yeoman parent generator
-    this.option('skip-prompt', { default: false })
-    this.option('is-test', { default: false })
+    super(args, opts);
+
+    this.option('skip-prompt', { default: false });
+    this.option('extension-manifest', { default: undefined });
   }
   
   initializing () {
-    // all paths are relative to root
-    this.extFolder = 'src/aem-cf-editor-1'
-    this.actionFolder = path.join(this.extFolder, 'actions')
-    this.webSrcFolder = path.join(this.extFolder, 'web-src')
-    this.extConfigPath = path.join(this.extFolder, 'ext.config.yaml')
-    this.configName = 'aem/cf-editor/1'
-    this.templatesFolder = '../templates'
-
-    if (!this.options['is-test']) {
-      this.extensionManifest = readManifest(EXTENSION_MANIFEST_PATH)
-    } else {
-      this.extensionManifest = this.options['extension-manifest']
-    }
+    const extensionRootFolder = 'src/aem-cf-editor-1';
+    this.extensionOptions = {
+      type: 'aem/cf-editor/1',
+      rootFolder: extensionRootFolder,
+      webSrcFolder: `${extensionRootFolder}/web-src`,
+      configPath: `${extensionRootFolder}/ext.config.yaml`,
+      manifest: this.options['extension-manifest']
+        ? this.options['extension-manifest']
+        : readManifest(EXTENSION_MANIFEST_PATH),
+      demoExtensionTemplatesFolder: DEMO_EXTENSION_TEMPLATES_FOLDER,
+    };
   }
 
   async prompting () {
-    if (!this.options['is-test']) {
-      this.log(briefOverviews['templateInfo'])
-      await promptTopLevelFields(this.extensionManifest)
-        .then(() => promptMainMenu(this.extensionManifest))
-        .then(() => writeManifest(this.extensionManifest, EXTENSION_MANIFEST_PATH))
-        .then(() => {
-          this.log("\nExtension Manifest for Code Pre-generation")
-          this.log("------------------------------------------")
-          this.log(JSON.stringify(this.extensionManifest, null, '  '))
-        })
+    if (this.options['skip-prompt']) {
+      return;
     }
+    this.log(briefOverviews['templateInfo']);
+
+    await promptTopLevelFields(this.extensionOptions.manifest)
+      .then(() => promptMainMenu(this.extensionOptions.manifest))
+      .then(() => writeManifest(this.extensionOptions.manifest, EXTENSION_MANIFEST_PATH))
+      .then(() => {
+        this.log("\nExtension Manifest for Code Pre-generation");
+        this.log("------------------------------------------");
+        this.log(JSON.stringify(this.extensionOptions.manifest, null, "  "));
+      });
   }
 
   async writing () {
-    if (this.extensionManifest.runtimeActions) {
-      // generate runtime actions
-      this.extensionManifest.runtimeActions.forEach((action) => {
-        this.composeWith({
-          Generator: ActionGenerator,
-          path: 'unknown'
-        },
-        {
-          'action-folder': this.actionFolder,
-          'config-path': this.extConfigPath,
-          'full-key-to-manifest': runtimeManifestKey,
-          'action-name': action.name,
-          'templates-folder': this.templatesFolder,
-        })
-      })
-    }
-
-    // generate the UI
     this.composeWith(
       {
         Generator: WebAssetsReactGenerator,
         path: 'unknown'
       },
       {
-        'skip-prompt': this.options['skip-prompt'],
-        'web-src-folder': this.webSrcFolder,
-        'config-path': this.extConfigPath,
-        'extension-manifest': this.extensionManifest,
-        'templates-folder': this.templatesFolder,
-      }
-    )
+        extensionOptions: this.extensionOptions,
+      },
+    );
 
-    if (this.extensionManifest.isDemoExtension) {
-      // generate demo extension
+    this.composeWith(
+      {
+        Generator: DependenciesGenerator,
+        path: 'unknown'
+      },
+      {
+        extensionOptions: this.extensionOptions,
+      },
+    );
+
+    this.composeWith(
+      {
+        Generator: ConfigGenerator,
+        path: 'unknown'
+      },
+      {
+        extensionOptions: this.extensionOptions,
+      },
+    );
+
+    if (this.extensionOptions.manifest.isDemoExtension) {
+      // generate some additional things related only to demo extension
       this.composeWith(
-          {
-            Generator: DemoExtensionGenerator,
-            path: 'unknown'
-          },
-          {
-            'skip-prompt': this.options['skip-prompt'],
-            'templates-folder': this.templatesFolder,
-            'extension-manifest': this.extensionManifest,
-          }
-      )
+        {
+          Generator: DemoExtensionGenerator,
+          path: 'unknown'
+        },
+        {
+          extensionOptions: this.extensionOptions,
+        }
+      );
     }
-
-    const unixExtConfigPath = upath.toUnix(this.extConfigPath)
-    // add the extension point config in root
-    utils.writeKeyAppConfig(
-      this,
-      'extensions.' + this.configName,
-      {
-        // posix separator
-        $include: unixExtConfigPath
-      }
-    )
-
-    // add extension point operation
-    utils.writeKeyYAMLConfig(
-      this,
-      this.extConfigPath,
-      'operations',
-      {
-        view: [
-          { type: 'web', impl: 'index.html' }
-        ]
-      }
-    )
-
-    // add actions path, relative to config file
-    utils.writeKeyYAMLConfig(this, this.extConfigPath, 'actions', path.relative(this.extFolder, this.actionFolder))
-
-    // add web-src path, relative to config file
-    utils.writeKeyYAMLConfig(this, this.extConfigPath, 'web', path.relative(this.extFolder, this.webSrcFolder))
   }
 
   async conflicts () {
-    const content = utils.readPackageJson(this)
-    content['description'] = this.extensionManifest['description']
-    content['version'] = this.extensionManifest['version']
-    utils.writePackageJson(this, content)
+    const content = utils.readPackageJson(this);
+    content.description = this.extensionOptions.manifest.description;
+    content.version = this.extensionOptions.manifest.version;
+    utils.writePackageJson(this, content);
   }
 
   async end () {
-    this.log(chalk.bold('\nSample code files have been generated.\n'))
-    this.log(chalk.bold('Next Steps:'))
-    this.log(chalk.bold('-----------'))
-    this.log(chalk.bold('1) Populate your local environment variables in the ".env" file.'))
-    this.log(chalk.bold('2) You can use `aio app run` or `aio app deploy` to see the sample code files in action.'))
-    if (this.extensionManifest.templateFolder) {
-      this.log(chalk.bold('3) Please refer to the link below for configuring the demo application:'))
-      this.log(chalk.blue(chalk.bold(`   -> ${promptDocs['demoExtensionDoc']}`)))
+    this.log(chalk.bold('\nSample code files have been generated.\n'));
+    this.log(chalk.bold('Next Steps:'));
+    this.log(chalk.bold('-----------'));
+    this.log(chalk.bold('1) Populate your local environment variables in the ".env" file.'));
+    this.log(chalk.bold('2) You can use `aio app run` or `aio app deploy` to see the sample code files in action.'));
+
+    if (this.extensionOptions.manifest.isDemoExtension) {
+      this.log(chalk.bold('3) Please refer to the link below for configuring the demo application:'));
+      this.log(chalk.blue(chalk.bold(`   -> ${promptDocs['demoExtensionDoc']}`)));
     }
-    this.log('\n')
+    this.log('\n');
   }
 }
 
-module.exports = MainGenerator
+module.exports = MainGenerator;

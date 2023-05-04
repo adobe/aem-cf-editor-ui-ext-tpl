@@ -1,5 +1,5 @@
 <%_ if (extensionManifest.isDemoExtension) { -%>
-import { Configuration, OpenAIApi } from "openai"
+import { Configuration, OpenAIApi } from "openai";
 
 const configuration = new Configuration({
   organization: process.env.OPENAI_ORG,
@@ -11,7 +11,7 @@ const checkState = (state) => {
   if (!state.selectedText) {
     throw new Error("Please select some text first");
   }
-}
+};
 
 const makeRequest = async (prompt) => {
   try {
@@ -24,6 +24,5 @@ const makeRequest = async (prompt) => {
   } catch (e) {
     throw new Error("An unexpected error has occurred. Please try again");
   }
-  return "";
-}
+};
 <%_ } -%>

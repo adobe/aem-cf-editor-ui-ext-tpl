@@ -67,7 +67,7 @@ function bootstrapInExcShell () {
   runtime.solution = {
     icon: 'AdobeExperienceCloud',
     title: '<%- extensionManifest.name %>',
-    shortTitle: 'JGR'
+    shortTitle: '<%- extensionManifest.name %>'
   }
   runtime.title = '<%- extensionManifest.name %>'
 }

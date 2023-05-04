@@ -1,11 +1,12 @@
 /*
  * <license header>
  */
-import { Text } from "@adobe/react-spectrum"
-import { register } from "@adobe/uix-guest"
-import { extensionId } from "./Constants"
+
+import { Text } from "@adobe/react-spectrum";
+import { register } from "@adobe/uix-guest";
+import { extensionId } from "./Constants";
 <%_ if (extensionManifest.isDemoExtension) { -%>
-<%- include(extensionManifest.templateFolder + '/rte-getCustomButtons') -%>
+<%- include(demoExtensionTemplatesFolder + '/openai-declaration') -%>
 <%_ } -%>
 
 function ExtensionRegistration() {
@@ -17,7 +18,7 @@ function ExtensionRegistration() {
         headerMenu: {
           getButtons() {
             return [
-              // YOUR HEADER BUTTONS CODE SHOULD BE HERE
+              // YOUR HEADER BUTTONS DECLARATION SHOULD BE HERE
               <%_ extensionManifest.headerMenuButtons.forEach((button) => { -%>
               {
                 'id': '<%- button.id %>',
@@ -42,13 +43,13 @@ function ExtensionRegistration() {
         <%_ } -%> <%# end of: if (extensionManifest.headerMenuButtons) %>
         <%_ if (extensionManifest.isDemoExtension) { -%>
         rte: {
-<%- include(extensionManifest.templateFolder + '/rte-getCustomButtons') -%>
+<%- include(demoExtensionTemplatesFolder + '/rte-get-custom-buttons') -%>
         }
         <%_ } -%>
       }
-    })
-  }
-  init().catch(console.error)
+    });
+  };
+  init().catch(console.error);
 
   return <Text>IFrame for integration with Host (AEM)...</Text>;
 }
