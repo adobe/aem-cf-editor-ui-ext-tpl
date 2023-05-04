@@ -17,6 +17,7 @@ describe('run', () => {
   test('test a generator invocation with default code generation', async () => {
     const options = {
       'skip-prompt': true,
+      'skip-install': true,
       'extension-manifest': defaultExtensionManifest,
     }
     await helpers.run(MainGenerator).withOptions(options);
@@ -25,6 +26,7 @@ describe('run', () => {
   test('test a generator invocation with custom code generation', async () => {
     const options = {
       'skip-prompt': true,
+      'skip-install': true,
       'extension-manifest': customExtensionManifest,
     }
     await helpers.run(MainGenerator).withOptions(options);
@@ -33,6 +35,7 @@ describe('run', () => {
   test('test a generator invocation with demo code generation', async () => {
     const options = {
       'skip-prompt': true,
+      'skip-install': true,
       'extension-manifest': demoExtensionManifest,
     }
     await helpers.run(MainGenerator).withOptions(options);
