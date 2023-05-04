@@ -9,13 +9,18 @@ const customExtensionManifest = {
   "name": "CF Editor Test Extension",
   "id": "cf-editor-test-extension",
   "description": "Test Extension for AEM Content Fragment Editor",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "headerMenuButtons": [
     {
       "label": "Import",
       "needsModal": true,
       "id": "import",
-    }
+    },
+    {
+      "label": "Export",
+      "needsModal": false,
+      "id": "export",
+    },
   ],
   "rte": {
     "badges": [
@@ -23,23 +28,23 @@ const customExtensionManifest = {
         "id": "badge-1",
       },
       {
-        "id": "badge-2",
+        "id": "badge2",
       },
     ],
     "toolbarButtons": [
       {
         "id": "tb-button-1",
-        "tooltip": "tb-button-1-tooltip",
+        "tooltip": "tb button 1 tooltip",
       },
     ],
     "widgets": [
       {
-        "label": "widget-1",
-        "id": "widget-1-label",
+        "label": "Widget-1",
+        "id": "widget-1",
       },
       {
-        "label": "widget-2",
-        "id": "widget-2-label",
+        "label": "Widget-2",
+        "id": "widget2",
       },
     ],
   },

@@ -33,14 +33,8 @@ const widgetPrompts = (manifest) => {
   return inquirer
     .prompt([labelPrompt(labelMessage)])
     .then((answers) => {
-      answers.id = slugify(answers.label, {
-        replacement: '-',  // replace spaces with replacement character, defaults to `-`
-        remove: undefined, // remove characters that match regex, defaults to `undefined`
-        lower: true,       // convert to lower case, defaults to `false`
-        strict: true,      // strip special characters except replacement, defaults to `false`
-        locale: 'vi',      // language code of the locale to use
-        trim: true,        // trim leading and trailing replacement chars, defaults to `true`
-      });
+      answers.id = formatId(answers.label);
+
       manifest["rte"] = manifest["rte"] || {};
       manifest["rte"]["widgets"] = manifest["rte"]["widgets"] || [];
       manifest["rte"]["widgets"].push(answers);
@@ -68,6 +62,7 @@ const idPrompt = (message) => {
     name: 'id',
     message: message,
     validate: (answer) => answer.length ? true : 'Required.',
+    transformer: (answer) => formatId(answer),
   };
 };
 
@@ -87,6 +82,13 @@ const labelPrompt = (message) => {
     message: message,
     validate: (answer) => answer.length ? true : 'Required.',
   };
+};
+
+const formatId = (id) => {
+  return slugify(id.replace(/^\d+/, ''), {
+    lower: true,
+    strict: true,
+  });
 };
 
 module.exports = {
