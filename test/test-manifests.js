@@ -17,6 +17,32 @@ const customExtensionManifest = {
       "id": "import",
     }
   ],
+  "rte": {
+    "badges": [
+      {
+        "id": "badge-1",
+      },
+      {
+        "id": "badge-2",
+      },
+    ],
+    "toolbarButtons": [
+      {
+        "id": "tb-button-1",
+        "tooltip": "tb-button-1-tooltip",
+      },
+    ],
+    "widgets": [
+      {
+        "label": "widget-1",
+        "id": "widget-1-label",
+      },
+      {
+        "label": "widget-2",
+        "id": "widget-2-label",
+      },
+    ],
+  },
 };
 
 const demoExtensionManifest = {

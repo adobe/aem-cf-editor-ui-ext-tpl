@@ -1,0 +1,14 @@
+             // YOUR RTE TOOLBAR BUTTONS DECLARATION SHOULD BE HERE
+             <%_ extensionManifest.rte.toolbarButtons.forEach((button) => { -%>
+             {
+               id: "<%- button.id %>",
+               tooltip: "<%- button.tooltip %>",
+               icon: 'Airplane',
+               onClick: (state) => {
+                 return [{
+                   type: "replaceContent",
+                   value: state.html + "<p> some new HTML </p>"
+                 }];
+               },
+             },
+             <%_ }) -%>

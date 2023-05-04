@@ -1,0 +1,10 @@
+           getWidgets: () => ([
+             // YOUR RTE WIDGETS DECLARATION SHOULD BE HERE
+             <%_ extensionManifest.rte.widgets.forEach((button) => { -%>
+             {
+               id: "<%- button.id %>",
+               label: "<%- button.label %>",
+               url: "/index.html#/variables",
+             },
+             <%_ }) -%>
+           ]),

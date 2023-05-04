@@ -15,35 +15,30 @@ function ExtensionRegistration() {
       id: extensionId,
       methods: {
         <%_ if (extensionManifest.headerMenuButtons) { -%>
-        headerMenu: {
-          getButtons() {
-            return [
-              // YOUR HEADER BUTTONS DECLARATION SHOULD BE HERE
-              <%_ extensionManifest.headerMenuButtons.forEach((button) => { -%>
-              {
-                'id': '<%- button.id %>',
-                'label': '<%- button.label %>',
-                'icon': 'OpenIn',
-                onClick() {
-                  <%_ if (button.needsModal) { -%>
-                  const modalURL = "/index.html#/<%- button.id %>-modal";
-                  console.log("Modal URL: ", modalURL);
+<%- include('./extension-registration/header-menu-buttons') -%>
+        <%_ } -%>
+        <%_ if (extensionManifest.rte || extensionManifest.isDemoExtension) { -%>
 
-                  guestConnection.host.modal.showUrl({
-                    title: "<%- button.label %>",
-                    url: modalURL,
-                  });
-                  <%_ } -%>
-                },
-              },
-              <%_ }) -%>
-            ];
-          },
-        },
-        <%_ } -%> <%# end of: if (extensionManifest.headerMenuButtons) %>
-        <%_ if (extensionManifest.isDemoExtension) { -%>
         rte: {
-<%- include(demoExtensionTemplatesFolder + '/rte-get-custom-buttons') -%>
+          <%_ if (extensionManifest.rte && extensionManifest.rte.widgets) { -%>
+<%- include('./extension-registration/rte-widgets') -%>
+          <%_ } -%>
+          <%_ if (extensionManifest.rte && extensionManifest.rte.badges) { -%>
+
+<%- include('./extension-registration/rte-badges') -%>
+          <%_ } -%>
+          <%_ if ((extensionManifest.rte && extensionManifest.rte.toolbarButtons) || extensionManifest.isDemoExtension) { -%>
+
+          getCustomButtons: () => ([
+            <%_ if (extensionManifest.rte && extensionManifest.rte.toolbarButtons) { -%>
+<%- include('./extension-registration/rte-toolbar-buttons') -%>
+            <%_ } -%>
+            <%_ if (extensionManifest.isDemoExtension) { -%>
+
+<%- include(demoExtensionTemplatesFolder + '/rte-toolbar-buttons') -%>
+            <%_ } -%>
+          ]),
+          <%_ } -%>
         }
         <%_ } -%>
       }
