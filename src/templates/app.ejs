@@ -6,13 +6,20 @@ import React from "react";
 import ErrorBoundary from "react-error-boundary";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ExtensionRegistration from "./ExtensionRegistration";
-<%# "Add import statements for modals" -%>
 <%_ const allCustomButtons = extensionManifest.headerMenuButtons || [] -%>
 <%_ allCustomButtons.forEach((button) => { -%>
   <%_ if (button.needsModal) { -%>
-    <%_ const modalFileName = button.label.replace(/ /g, '') + 'Modal' -%>
-import <%- modalFileName %> from "./<%- modalFileName %>";
+    <%_ const buttonComponent = button.id.replace(/-/g, '') + 'Modal' -%>
+    <%_ const capitalizedButtonComponent = buttonComponent.charAt(0).toUpperCase() + buttonComponent.slice(1); -%>
+import <%- capitalizedButtonComponent %> from "./<%- capitalizedButtonComponent %>";
 <%_ }}) -%>
+<%_ if (extensionManifest.rte && extensionManifest.rte.widgets) { -%>
+  <%_ extensionManifest.rte.widgets.forEach((widget) => { -%>
+  <%_ const widgetComponent = widget.id.replace(/-/g, '') + 'Widget' -%>
+  <%_ const capitalizedWidgetComponent = widgetComponent.charAt(0).toUpperCase() + widgetComponent.slice(1); -%>
+import <%- capitalizedWidgetComponent %> from "./<%- capitalizedWidgetComponent %>";
+  <%_ }) -%>
+<%_ } -%>
 
 function App() {
   return (
@@ -27,11 +34,23 @@ function App() {
           <%_ if (extensionManifest.headerMenuButtons) { -%>
             <%_ extensionManifest.headerMenuButtons.forEach((button) => { -%>
               <%_ if (button.needsModal) { -%>
+                <%_ const buttonComponent = button.id.replace(/-/g, '') + 'Modal' -%>
+                <%_ const capitalizedButtonComponent = buttonComponent.charAt(0).toUpperCase() + buttonComponent.slice(1); -%>
           <Route
             exact path="<%- button.id %>-modal"
-            element={<<%- button.label.replace(/ /g, '') %>Modal />}
+            element={<<%- capitalizedButtonComponent %> />}
           />
           <%_ }})} -%>
+          <%_ if (extensionManifest.rte && extensionManifest.rte.widgets) { -%>
+            <%_ extensionManifest.rte.widgets.forEach((widget) => { -%>
+              <%_ const widgetComponent = widget.id.replace(/-/g, '') + 'Widget' -%>
+              <%_ const capitalizedWidgetComponent = widgetComponent.charAt(0).toUpperCase() + widgetComponent.slice(1); -%>
+          <Route
+            exact path="<%- widget.id %>-widget"
+            element={<<%- capitalizedWidgetComponent %> />}
+          />
+            <%_ }) -%>
+          <%_ } -%>
           {/* YOUR CUSTOM ROUTES SHOULD BE HERE */}
         </Routes>
       </ErrorBoundary>

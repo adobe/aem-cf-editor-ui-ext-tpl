@@ -1,0 +1,27 @@
+        headerMenu: {
+          getButtons() {
+            return [
+              // YOUR HEADER BUTTONS DECLARATION SHOULD BE HERE
+              <%_ extensionManifest.headerMenuButtons.forEach((button) => { -%>
+              {
+                id: '<%- button.id %>',
+                label: '<%- button.label %>',
+                icon: 'OpenIn',
+                onClick() {
+                  <%_ if (button.needsModal) { -%>
+                  const modalURL = "/index.html#/<%- button.id %>-modal";
+                  console.log("Modal URL: ", modalURL);
+
+                  guestConnection.host.modal.showUrl({
+                    title: "<%- button.label %>",
+                    url: modalURL,
+                  });
+                  <%_ } else { -%>
+                  console.log("Button '<%- button.id %>' has been pressed.");
+                  <%_ } -%>
+                },
+              },
+              <%_ }) -%>
+            ];
+          },
+        },

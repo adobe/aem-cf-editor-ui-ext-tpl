@@ -30,7 +30,8 @@ class WebAssetsReactGenerator extends Generator {
     this.copyStaticFiles();
     this.generateAppRoute();
     this.generateExtensionRegistration();
-    this.generateModalFiles('headerMenu')
+    this.generateModalFiles();
+    this.generateWidgetFiles();
     this.configureBabel();
   }
 
@@ -60,22 +61,47 @@ class WebAssetsReactGenerator extends Generator {
     )
   }
 
-  generateModalFiles(extensionArea) {
+  generateModalFiles() {
     const customButtons = this.options.extensionOptions.manifest.headerMenuButtons || [];
 
     customButtons.forEach((button) => {
       if (button.needsModal) {
-        const modalFileName = button.label.replace(/ /g, '') + 'Modal';
+        const componentName = button.id.replace(/-/g, '') + 'Modal';
+        const capitalizedComponentName = componentName.charAt(0).toUpperCase() + componentName.slice(1);
+
         this.fs.copyTpl(
           this.templatePath(`${this.templatesFolder}/modal.ejs`),
-          this.destinationPath(`${this.options.extensionOptions.webSrcFolder}/src/components/${modalFileName}.js`),
+          this.destinationPath(
+            `${this.options.extensionOptions.webSrcFolder}/src/components/${capitalizedComponentName}.js`
+          ),
           {
             ...this.templateProps,
-            functionName: modalFileName,
-            extensionArea: extensionArea,
+            componentName: capitalizedComponentName,
+            button: button,
           }
         );
       }
+    });
+  }
+
+  generateWidgetFiles() {
+    const widgets = this.options.extensionOptions.manifest.rte?.widgets || [];
+
+    widgets.forEach((widget) => {
+      const componentName = widget.id.replace(/-/g, '') + 'Widget';
+      const capitalizedComponentName = componentName.charAt(0).toUpperCase() + componentName.slice(1);
+
+      this.fs.copyTpl(
+          this.templatePath(`${this.templatesFolder}/widget.ejs`),
+          this.destinationPath(
+            `${this.options.extensionOptions.webSrcFolder}/src/components/${capitalizedComponentName}.js`
+          ),
+          {
+            ...this.templateProps,
+            componentName: capitalizedComponentName,
+            widget: widget,
+          }
+      );
     });
   }
 

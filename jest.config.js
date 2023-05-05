@@ -16,5 +16,6 @@ module.exports = {
   },
   coveragePathIgnorePatterns: [
     '/src/prompts.js',
+    '/src/prompts',
   ],
 }

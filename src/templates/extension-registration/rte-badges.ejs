@@ -1,0 +1,12 @@
+           getBadges: () => ([
+             // YOUR RTE BADGES DECLARATION SHOULD BE HERE
+             <%_ extensionManifest.rte.badges.forEach((badge) => { -%>
+             {
+               id: "<%- badge.id %>",
+               prefix: "!",
+               suffix: "!",
+               backgroundColor: "#D6F1FF",
+               textColor: "#54719B",
+             },
+             <%_ }) -%>
+           ]),

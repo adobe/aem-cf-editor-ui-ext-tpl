@@ -14,15 +14,12 @@ const MainGenerator = require('../src/index');
 const { defaultExtensionManifest, customExtensionManifest, demoExtensionManifest } = require('./test-manifests');
 
 describe('run', () => {
-  // workaround for GitHub tests workflow
-  jest.setTimeout(20000);
-
   test('test a generator invocation with default code generation', async () => {
     const options = {
       'skip-prompt': true,
       'skip-install': true,
       'extension-manifest': defaultExtensionManifest,
-    }
+    };
     await helpers.run(MainGenerator).withOptions(options);
   });
 
@@ -31,7 +28,7 @@ describe('run', () => {
       'skip-prompt': true,
       'skip-install': true,
       'extension-manifest': customExtensionManifest,
-    }
+    };
     await helpers.run(MainGenerator).withOptions(options);
   });
 
@@ -40,7 +37,7 @@ describe('run', () => {
       'skip-prompt': true,
       'skip-install': true,
       'extension-manifest': demoExtensionManifest,
-    }
+    };
     await helpers.run(MainGenerator).withOptions(options);
   });
 });

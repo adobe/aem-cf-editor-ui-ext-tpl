@@ -13,8 +13,9 @@ const inquirer = require('inquirer')
 const slugify = require('slugify')
 const chalk = require('chalk')
 const path = require('path')
-
 const { readManifest } = require('./utils')
+const headerMenuButtonPrompts = require('./prompts/header-menu')
+const { toolbarButtonPrompts, badgePrompts, widgetPrompts } = require('./prompts/rte')
 
 const DEMO_MANIFEST_PATH = path.join(__dirname, './manifests/demo-extension-manifest.json')
 
@@ -30,7 +31,7 @@ const briefOverviews = {
 
 const promptDocs = {
   mainDoc: "https://developer.adobe.com/uix/docs/",
-  demoExtensionDoc: "TBD"
+  demoExtensionDoc: "https://developer.adobe.com/uix/docs/"
 }
 
 // Top Level prompts
@@ -105,7 +106,19 @@ const promptMainMenu = (manifest) => {
     new inquirer.Separator(),
     {
       name: "Add a custom button to Header Menu",
-      value: nestedButtonPrompts.bind(this, manifest, 'headerMenuButtons'),
+      value: headerMenuButtonPrompts.bind(this, manifest),
+    },
+    {
+      name: "Add Rich Text Editor (RTE) Toolbar Button",
+      value: toolbarButtonPrompts.bind(this, manifest),
+    },
+    {
+      name: "Add Rich Text Editor (RTE) Toolbar Widget",
+      value: widgetPrompts.bind(this, manifest),
+    },
+    {
+      name: "Add Rich Text Editor (RTE) Toolbar Badge",
+      value: badgePrompts.bind(this, manifest),
     },
     new inquirer.Separator(),
     {
@@ -136,55 +149,6 @@ const promptMainMenu = (manifest) => {
     .catch((error) => {
       console.log(error)
     })
-}
-
-// Prompts for button metadata
-const nestedButtonPrompts = (manifest, manifestNodeName) => {
-  const questions = [labelPrompt(), modalPrompt()]
-
-  return inquirer
-    .prompt(questions)
-    .then((answers) => {
-      answers.id = slugify(answers.label, {
-        replacement: '-',  // replace spaces with replacement character, defaults to `-`
-        remove: undefined, // remove characters that match regex, defaults to `undefined`
-        lower: true,       // convert to lower case, defaults to `false`
-        strict: true,      // strip special characters except replacement, defaults to `false`
-        locale: 'vi',      // language code of the locale to use
-        trim: true         // trim leading and trailing replacement chars, defaults to `true`
-      })
-      // console.log(JSON.stringify(answers, null, '  '))
-      manifest[manifestNodeName] = manifest[manifestNodeName] || []
-      manifest[manifestNodeName].push(answers)
-    })
-    .catch((error) => {
-      console.error(error)
-    })
-}
-
-// Helper prompts for button metadata
-const labelPrompt = () => {
-  return {
-    type: 'input',
-    name: 'label',
-    message: "Please provide label name for the button:",
-    validate(answer) {
-      if (!answer.length) {
-        return 'Required.'
-      }
-
-      return true
-    },
-  }
-}
-
-const modalPrompt = () => {
-  return {
-    type: 'confirm',
-    name: 'needsModal',
-    message: "Do you need to show a modal for the button?",
-    default: false
-  }
 }
 
 // Guide Menu Prompts
