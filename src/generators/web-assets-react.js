@@ -85,7 +85,7 @@ class WebAssetsReactGenerator extends Generator {
   }
 
   generateWidgetFiles() {
-    const widgets = this.options.extensionOptions.manifest.rte.widgets || [];
+    const widgets = this.options.extensionOptions.manifest.rte?.widgets || [];
 
     widgets.forEach((widget) => {
       const componentName = widget.id.replace(/-/g, '') + 'Widget';
