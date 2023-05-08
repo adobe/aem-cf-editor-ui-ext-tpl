@@ -11,38 +11,38 @@ governing permissions and limitations under the License.
 
 jest.setTimeout(360000);
 
-const path = require('path')
-const { stdout, stderr } = require('stdout-stderr')
+const path = require('path');
+const { stdout, stderr } = require('stdout-stderr');
 
 process.on('unhandledRejection', error => {
-  throw error
-})
+  throw error;
+});
 
-// trap console log
 beforeEach(() => {
-  stdout.start()
-  stderr.start()
-  stdout.print = false // set to true to see output
-})
+  stdout.start();
+  stderr.start();
+  stdout.print = true; // set to true to see output
+});
 
 afterEach(() => {
-  stdout.stop()
-  stderr.stop()
-})
+  stdout.stop();
+  stderr.stop();
+});
 
 // quick normalization to test windows/unix paths
-global.n = p => path.normalize(p)
-global.r = p => path.resolve(p)
+global.n = p => path.normalize(p);
+global.r = p => path.resolve(p);
 
 /**
  * Checks that package.json has all needed dependencies specified.
  *
+ * @param fs
  * @param {object} dependencies An object representing expected package.json dependencies.
  * @param {object} devDependencies An object representing expected package.json dev dependencies.
  */
 global.assertDependencies = (fs, dependencies, devDependencies) => {
   expect(JSON.parse(fs.readFileSync('package.json').toString())).toEqual(expect.objectContaining({
     dependencies,
-    devDependencies
-  }))
-}
+    devDependencies,
+  }));
+};

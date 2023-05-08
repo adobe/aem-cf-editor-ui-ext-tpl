@@ -22,8 +22,8 @@ const headerMenuButtonPrompts = (manifest) => {
         lower: true,
         strict: true,
       });
-      manifest["headerMenuButtons"] = manifest["headerMenuButtons"] || [];
-      manifest["headerMenuButtons"].push(answers);
+      manifest.headerMenuButtons = manifest.headerMenuButtons || [];
+      manifest.headerMenuButtons.push(answers);
     })
     .catch((error) => {
       console.error(error);
@@ -34,22 +34,22 @@ const labelPrompt = () => {
   return {
     type: 'input',
     name: 'label',
-    message: "Please provide label name for the button:",
-    validate(answer) {
+    message: 'Please provide label name for the button:',
+    validate (answer) {
       if (!answer.length) {
         return 'Required.';
       }
 
       return true;
     },
-  }
+  };
 };
 
 const modalPrompt = () => {
   return {
     type: 'confirm',
     name: 'needsModal',
-    message: "Do you need to show a modal for the button?",
+    message: 'Do you need to show a modal for the button?',
     default: false,
   };
 };

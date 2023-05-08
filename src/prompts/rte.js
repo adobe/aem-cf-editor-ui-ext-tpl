@@ -13,45 +13,45 @@ const inquirer = require('inquirer');
 const slugify = require('slugify');
 
 const toolbarButtonPrompts = (manifest) => {
-  const idMessage = "Please provide ID for the toolbar button (must be unique across all extensions, consider"
-      + " adding a vendor prefix to this field):";
-  const tooltipMessage = "Please provide tooltip for the button (a text that will be rendered on mouse over):";
+  const idMessage = 'Please provide ID for the toolbar button (must be unique across all extensions, consider' +
+      ' adding a vendor prefix to this field):';
+  const tooltipMessage = 'Please provide tooltip for the button (a text that will be rendered on mouse over):';
 
   return inquirer
     .prompt([idPrompt(idMessage), tooltipPrompt(tooltipMessage)])
     .then((answers) => {
-      manifest["rte"] = manifest["rte"] || {};
-      manifest["rte"]["toolbarButtons"] = manifest["rte"]["toolbarButtons"] || [];
-      manifest["rte"]["toolbarButtons"].push(answers);
+      manifest.rte = manifest.rte || {};
+      manifest.rte.toolbarButtons = manifest.rte.toolbarButtons || [];
+      manifest.rte.toolbarButtons.push(answers);
     })
     .catch((error) => console.error(error));
 };
 
 const widgetPrompts = (manifest) => {
-  const labelMessage = "Please provide label name for the widget:";
+  const labelMessage = 'Please provide label name for the widget:';
 
   return inquirer
     .prompt([labelPrompt(labelMessage)])
     .then((answers) => {
       answers.id = formatId(answers.label);
 
-      manifest["rte"] = manifest["rte"] || {};
-      manifest["rte"]["widgets"] = manifest["rte"]["widgets"] || [];
-      manifest["rte"]["widgets"].push(answers);
+      manifest.rte = manifest.rte || {};
+      manifest.rte.widgets = manifest.rte.widgets || [];
+      manifest.rte.widgets.push(answers);
     })
     .catch((error) => console.error(error));
 };
 
 const badgePrompts = (manifest) => {
-  const idMessage = "Please provide ID for the badge (must be unique across all extensions, consider adding a vendor"
-    + " prefix to this field):";
+  const idMessage = 'Please provide ID for the badge (must be unique across all extensions, consider adding a vendor' +
+    ' prefix to this field):';
 
   return inquirer
     .prompt([idPrompt(idMessage)])
     .then((answers) => {
-      manifest["rte"] = manifest["rte"] || {};
-      manifest["rte"]["badges"] = manifest["rte"]["badges"] || [];
-      manifest["rte"]["badges"].push(answers);
+      manifest.rte = manifest.rte || {};
+      manifest.rte.badges = manifest.rte.badges || [];
+      manifest.rte.badges.push(answers);
     })
     .catch((error) => console.error(error));
 };
@@ -60,7 +60,7 @@ const idPrompt = (message) => {
   return {
     type: 'input',
     name: 'id',
-    message: message,
+    message,
     validate: (answer) => answer.length ? true : 'Required.',
     transformer: (answer) => formatId(answer),
   };
@@ -70,7 +70,7 @@ const tooltipPrompt = (message) => {
   return {
     type: 'input',
     name: 'tooltip',
-    message: message,
+    message,
     validate: (answer) => answer.length ? true : 'Required.',
   };
 };
@@ -79,7 +79,7 @@ const labelPrompt = (message) => {
   return {
     type: 'input',
     name: 'label',
-    message: message,
+    message,
     validate: (answer) => answer.length ? true : 'Required.',
   };
 };

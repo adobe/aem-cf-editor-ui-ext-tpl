@@ -16,7 +16,7 @@ class WebAssetsReactGenerator extends Generator {
   constructor (args, opts) {
     super(args, opts);
 
-    this.option("extensionOptions", { type: Object });
+    this.option('extensionOptions', { type: Object });
 
     this.templatesFolder = path.resolve(path.join(__dirname, '../templates/'));
     // templateProps are used in ejs templates
@@ -35,7 +35,7 @@ class WebAssetsReactGenerator extends Generator {
     this.configureBabel();
   }
 
-  copyStaticFiles() {
+  copyStaticFiles () {
     this.fs.copyTpl(
       this.templatePath(`${this.templatesFolder}/web/**/*`),
       this.destinationPath(this.options.extensionOptions.webSrcFolder),
@@ -43,25 +43,25 @@ class WebAssetsReactGenerator extends Generator {
     );
   }
 
-  generateAppRoute() {
+  generateAppRoute () {
     this.fs.copyTpl(
       this.templatePath(`${this.templatesFolder}/app.ejs`),
       this.destinationPath(`${this.options.extensionOptions.webSrcFolder}/src/components/App.js`),
       this.templateProps
-    )
+    );
   }
 
-  generateExtensionRegistration() {
+  generateExtensionRegistration () {
     this.fs.copyTpl(
       this.templatePath(`${this.templatesFolder}/extension-registration.ejs`),
       this.destinationPath(
         `${this.options.extensionOptions.webSrcFolder}/src/components/ExtensionRegistration.js`
       ),
       this.templateProps
-    )
+    );
   }
 
-  generateModalFiles() {
+  generateModalFiles () {
     const customButtons = this.options.extensionOptions.manifest.headerMenuButtons || [];
 
     customButtons.forEach((button) => {
@@ -77,14 +77,14 @@ class WebAssetsReactGenerator extends Generator {
           {
             ...this.templateProps,
             componentName: capitalizedComponentName,
-            button: button,
+            button,
           }
         );
       }
     });
   }
 
-  generateWidgetFiles() {
+  generateWidgetFiles () {
     const widgets = this.options.extensionOptions.manifest.rte?.widgets || [];
 
     widgets.forEach((widget) => {
@@ -92,24 +92,24 @@ class WebAssetsReactGenerator extends Generator {
       const capitalizedComponentName = componentName.charAt(0).toUpperCase() + componentName.slice(1);
 
       this.fs.copyTpl(
-          this.templatePath(`${this.templatesFolder}/widget.ejs`),
-          this.destinationPath(
-            `${this.options.extensionOptions.webSrcFolder}/src/components/${capitalizedComponentName}.js`
-          ),
-          {
-            ...this.templateProps,
-            componentName: capitalizedComponentName,
-            widget: widget,
-          }
+        this.templatePath(`${this.templatesFolder}/widget.ejs`),
+        this.destinationPath(
+          `${this.options.extensionOptions.webSrcFolder}/src/components/${capitalizedComponentName}.js`
+        ),
+        {
+          ...this.templateProps,
+          componentName: capitalizedComponentName,
+          widget,
+        }
       );
     });
   }
 
-  configureBabel() {
+  configureBabel () {
     // NOTE this is a global file and might conflict
     this.fs.writeJSON(this.destinationPath('.babelrc'), {
-      plugins: ['@babel/plugin-transform-react-jsx']
-    })
+      plugins: ['@babel/plugin-transform-react-jsx'],
+    });
   }
 }
 
