@@ -66,9 +66,9 @@ const promptTopLevelFields = (manifest) => {
       name: 'version',
       message: 'What version would you like to start with?',
       default: '0.0.1',
-      validate (answer) {
-        if (!/^\\bv?(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)){2}(?:-[\\da-z\\-]+(?:\\.[\\da-z\\-]+)*)?(?:\\+[\\da-z\\-]+(?:\\.[\\da-z\\-]+)*)?\\b$/.test(answer)) {
-          return 'Required. Must match semantic versioning rules.';
+      validate(answer) {
+        if (!new RegExp("^\\bv?(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)){2}(?:-[\\da-z\\-]+(?:\\.[\\da-z\\-]+)*)?(?:\\+[\\da-z\\-]+(?:\\.[\\da-z\\-]+)*)?\\b$").test(answer)) {
+          return 'Required. Must match semantic versioning rules.'
         }
 
         return true;
@@ -78,7 +78,7 @@ const promptTopLevelFields = (manifest) => {
     .then((answers) => {
       if (answers.name) {
         manifest.name = answers.name;
-        manifest.id = slugify(answers.name.replace(/^\d+/, ''), {
+        manifest.id = slugify(answers.name, {
           lower: true,
           strict: true,
         });
