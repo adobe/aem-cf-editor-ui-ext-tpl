@@ -10,8 +10,8 @@ governing permissions and limitations under the License.
 */
 
 const Generator = require('yeoman-generator');
-const { utils } = require("@adobe/generator-app-common-lib");
-const path = require("path");
+const { utils } = require('@adobe/generator-app-common-lib');
+const path = require('path');
 
 /**
  * Generate some additional things related only to demo extension
@@ -20,7 +20,7 @@ class DemoExtensionGenerator extends Generator {
   constructor (args, opts) {
     super(args, opts);
 
-    this.option("extensionOptions", { type: Object });
+    this.option('extensionOptions', { type: Object });
   }
 
   writing () {
@@ -28,16 +28,16 @@ class DemoExtensionGenerator extends Generator {
     this.copyReadme();
   }
 
-  addDependencies() {
+  addDependencies () {
     utils.addDependencies(this, {
-      'openai': '^3.1.0'
+      openai: '^3.1.0',
     });
   }
 
-  copyReadme() {
+  copyReadme () {
     this.fs.copyTpl(
-      this.templatePath(path.resolve(
-        `${__dirname}/../templates/${this.options.extensionOptions.demoExtensionTemplatesFolder}/README.md.ejs`)
+      this.templatePath(
+        path.resolve(__dirname, '..', 'templates', this.options.extensionOptions.demoExtensionTemplatesFolder, 'README.md.ejs')
       ),
       this.destinationPath('README.md'),
       {
@@ -47,4 +47,4 @@ class DemoExtensionGenerator extends Generator {
   }
 }
 
-module.exports = DemoExtensionGenerator
+module.exports = DemoExtensionGenerator;

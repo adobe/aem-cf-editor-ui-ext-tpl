@@ -48,7 +48,7 @@ class MainGenerator extends Generator {
     this.option('skip-prompt', { default: false });
     this.option('extension-manifest', { type: Object, default: undefined });
   }
-  
+
   initializing () {
     const extensionRootFolder = 'src/aem-cf-editor-1';
     this.extensionOptions = {
@@ -67,15 +67,15 @@ class MainGenerator extends Generator {
     if (this.options['skip-prompt']) {
       return;
     }
-    this.log(briefOverviews['templateInfo']);
+    this.log(briefOverviews.templateInfo);
 
     await promptTopLevelFields(this.extensionOptions.manifest)
       .then(() => promptMainMenu(this.extensionOptions.manifest))
       .then(() => writeManifest(this.extensionOptions.manifest, EXTENSION_MANIFEST_PATH))
       .then(() => {
-        this.log("\nExtension Manifest for Code Pre-generation");
-        this.log("------------------------------------------");
-        this.log(JSON.stringify(this.extensionOptions.manifest, null, "  "));
+        this.log('\nExtension Manifest for Code Pre-generation');
+        this.log('------------------------------------------');
+        this.log(JSON.stringify(this.extensionOptions.manifest, null, '  '));
       });
   }
 
@@ -83,31 +83,31 @@ class MainGenerator extends Generator {
     this.composeWith(
       {
         Generator: WebAssetsReactGenerator,
-        path: 'unknown'
+        path: 'unknown',
       },
       {
         extensionOptions: this.extensionOptions,
-      },
+      }
     );
 
     this.composeWith(
       {
         Generator: DependenciesGenerator,
-        path: 'unknown'
+        path: 'unknown',
       },
       {
         extensionOptions: this.extensionOptions,
-      },
+      }
     );
 
     this.composeWith(
       {
         Generator: ConfigGenerator,
-        path: 'unknown'
+        path: 'unknown',
       },
       {
         extensionOptions: this.extensionOptions,
-      },
+      }
     );
 
     if (this.extensionOptions.manifest.isDemoExtension) {
@@ -115,7 +115,7 @@ class MainGenerator extends Generator {
       this.composeWith(
         {
           Generator: DemoExtensionGenerator,
-          path: 'unknown'
+          path: 'unknown',
         },
         {
           extensionOptions: this.extensionOptions,
@@ -140,7 +140,7 @@ class MainGenerator extends Generator {
 
     if (this.extensionOptions.manifest.isDemoExtension) {
       this.log(chalk.bold('3) Please refer to the link below for configuring the demo application:'));
-      this.log(chalk.blue(chalk.bold(`   -> ${promptDocs['demoExtensionDoc']}`)));
+      this.log(chalk.blue(chalk.bold(`   -> ${promptDocs.demoExtensionDoc}`)));
     }
     this.log('\n');
   }

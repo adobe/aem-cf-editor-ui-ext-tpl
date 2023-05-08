@@ -14,58 +14,66 @@ const { readManifest, writeManifest } = require('../src/utils');
 
 describe('readManifest', () => {
   afterEach(() => {
-    jest.resetAllMocks()
+    jest.resetAllMocks();
   });
 
   test('should return the parsed manifest file contents when the file exists', () => {
-    const manifestPath = 'manifest.json'
-    const expectedManifest = { name: 'my-ext', version: '1.0.0' }
-    const expectedManifestStr = JSON.stringify(expectedManifest)
+    const manifestPath = 'manifest.json';
+    const expectedManifest = { name: 'my-ext', version: '1.0.0' };
 
-    const readFileSyncMock = jest.spyOn(fs, 'readFileSync').mockReturnValue(expectedManifestStr);
+    const readJsonSyncMock = jest.spyOn(fs, 'readJsonSync').mockReturnValue(expectedManifest);
 
-    expect(readManifest(manifestPath)).toEqual(expectedManifest)
-    expect(readFileSyncMock).toHaveBeenCalledWith(manifestPath, { encoding: 'utf8' })
+    expect(readManifest(manifestPath)).toEqual(expectedManifest);
+    expect(readJsonSyncMock).toHaveBeenCalledWith(manifestPath, { encoding: 'utf8' });
   });
 
   test('should return an empty object when the manifest file does not exist (ENOENT)', () => {
-    const manifestPath = 'nonexistent-file.json'
-    const readFileSyncMock = jest.spyOn(fs, 'readFileSync').mockImplementation(() => {
-      throw { code: 'ENOENT' }
-    })
+    const manifestPath = 'nonexistent-file.json';
+    const readJsonSyncMock = jest.spyOn(fs, 'readJsonSync').mockImplementation(() => {
+      const err = new Error();
+      err.code = 'ENOENT';
+      throw err;
+    });
 
-    expect(readManifest(manifestPath)).toEqual({})
-    expect(readFileSyncMock).toHaveBeenCalledWith(manifestPath, { encoding: 'utf8' })
+    expect(readManifest(manifestPath)).toEqual({});
+    expect(readJsonSyncMock).toHaveBeenCalledWith(manifestPath, { encoding: 'utf8' });
   });
 
-  test('should throw an error when fs.readFileSync throws an error with code other than ENOENT', () => {
-    const manifestPath = 'invalid-manifest.json'
-    const readFileSyncMock = jest.spyOn(fs, 'readFileSync').mockImplementation(() => {
-      throw { code: 'EACCES' }
-    })
+  test('should throw an error when throws an error with code other than ENOENT', () => {
+    const manifestPath = 'invalid-manifest.json';
+    const readJsonSyncMock = jest.spyOn(fs, 'readJsonSync').mockImplementation(() => {
+      const err = new Error();
+      err.code = 'EACCES';
+      throw err;
+    });
 
     try {
       readManifest(manifestPath)
     } catch (err) {
       expect(err.code).toEqual('EACCES')
     }
-    expect(readFileSyncMock).toHaveBeenCalledWith(manifestPath, { encoding: 'utf8' })
+    expect(readJsonSyncMock).toHaveBeenCalledWith(manifestPath, { encoding: 'utf8' });
   });
 
-  test('should throw an error when the manifest file is not valid JSON', () => {
-    const manifestPath = 'invalid-manifest.json'
-    const readFileSyncMock = jest.spyOn(fs, 'readFileSync').mockReturnValue('invalid-json')
+  test('should throw an error when some other error occurs such as manifest file contains not valid JSON', () => {
+    const manifestPath = 'invalid-manifest.json';
+    const readJsonSyncMock = jest.spyOn(fs, 'readJsonSync').mockImplementation(() => {
+      const err = new Error();
+      throw err;
+    });
 
-    expect(() => {
+    try {
       readManifest(manifestPath)
-    }).toThrow()
-    expect(readFileSyncMock).toHaveBeenCalledWith(manifestPath, { encoding: 'utf8' })
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error)
+    }
+    expect(readJsonSyncMock).toHaveBeenCalledWith(manifestPath, { encoding: 'utf8' });
   });
 });
 
 describe('writeManifest', () => {
   afterEach(() => {
-    jest.resetAllMocks()
+    jest.resetAllMocks();
   });
 
   test('should write the manifest to file', () => {

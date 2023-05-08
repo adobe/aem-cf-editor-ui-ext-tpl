@@ -12,13 +12,13 @@ governing permissions and limitations under the License.
 const Generator = require('yeoman-generator');
 const path = require('path');
 const upath = require('upath');
-const { utils } = require("@adobe/generator-app-common-lib");
+const { utils } = require('@adobe/generator-app-common-lib');
 
 class ConfigGenerator extends Generator {
   constructor (args, opts) {
     super(args, opts);
 
-    this.option("extensionOptions", { type: Object });
+    this.option('extensionOptions', { type: Object });
   }
 
   writing () {
