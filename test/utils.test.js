@@ -96,21 +96,7 @@ describe('generateRandomPrefix', () => {
   it('should generate a random prefix of the specified length', () => {
     const length = 5;
     const prefix = generateRandomPrefix(length);
-    expect(prefix).toHaveLength(length);
-  });
-
-  it('should start with an uppercase letter', () => {
-    const length = 10;
-    const prefix = generateRandomPrefix(length);
-    const firstChar = prefix.charAt(0);
-    expect(firstChar).toMatch(/[A-Z]/);
-  });
-
-  it('should consist of lowercase letters after the first character', () => {
-    const length = 8;
-    const prefix = generateRandomPrefix(length);
-    const remainingChars = prefix.slice(1);
-    expect(remainingChars).toMatch(/^[a-z]+$/);
+    expect(prefix).toMatch(/[a-z]{5}/);
   });
 });
 

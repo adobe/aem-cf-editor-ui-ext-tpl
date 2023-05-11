@@ -45,7 +45,7 @@ function generateUniqueWithinListIdFromValue (value, list) {
     id = generateRandomPrefix(5) + '-' + id;
   }
 
-  if (list.length) {
+  if (list) {
     let matching = list.find(obj => obj.id === id);
     while (matching !== undefined) {
       id = generateRandomPrefix(5) + '-' + id;

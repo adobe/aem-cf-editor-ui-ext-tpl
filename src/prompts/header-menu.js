@@ -27,7 +27,7 @@ const headerMenuButtonPrompts = (manifest) => {
     });
 };
 
-const labelPrompt = (manifest) => {
+const labelPrompt = () => {
   return {
     type: 'input',
     name: 'label',
