@@ -36,7 +36,7 @@ const widgetPrompts = (manifest) => {
     .then((answers) => {
       manifest.rte = manifest.rte || {};
       manifest.rte.widgets = manifest.rte.widgets || [];
-      answers.id = generateUniqueWithinListIdFromValue(answers.label, manifest.headerMenuButtons);
+      answers.id = generateUniqueWithinListIdFromValue(answers.label, manifest.rte.widgets);
       manifest.rte.widgets.push(answers);
     })
     .catch((error) => console.error(error));
