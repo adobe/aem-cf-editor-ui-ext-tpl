@@ -10,7 +10,7 @@ governing permissions and limitations under the License.
 */
 
 const inquirer = require('inquirer');
-const slugify = require('slugify');
+const { generateUniqueWithinListIdFromValue } = require('../utils');
 
 const toolbarButtonPrompts = (manifest) => {
   const idMessage = 'Please provide ID for the toolbar button (must be unique across all extensions, consider' +
@@ -22,6 +22,7 @@ const toolbarButtonPrompts = (manifest) => {
     .then((answers) => {
       manifest.rte = manifest.rte || {};
       manifest.rte.toolbarButtons = manifest.rte.toolbarButtons || [];
+      answers.id = generateUniqueWithinListIdFromValue(answers.id, manifest.rte.toolbarButtons);
       manifest.rte.toolbarButtons.push(answers);
     })
     .catch((error) => console.error(error));
@@ -33,10 +34,9 @@ const widgetPrompts = (manifest) => {
   return inquirer
     .prompt([labelPrompt(labelMessage)])
     .then((answers) => {
-      answers.id = formatId(answers.label);
-
       manifest.rte = manifest.rte || {};
       manifest.rte.widgets = manifest.rte.widgets || [];
+      answers.id = generateUniqueWithinListIdFromValue(answers.label, manifest.rte.widgets);
       manifest.rte.widgets.push(answers);
     })
     .catch((error) => console.error(error));
@@ -51,6 +51,7 @@ const badgePrompts = (manifest) => {
     .then((answers) => {
       manifest.rte = manifest.rte || {};
       manifest.rte.badges = manifest.rte.badges || [];
+      answers.id = generateUniqueWithinListIdFromValue(answers.id, manifest.rte.badges);
       manifest.rte.badges.push(answers);
     })
     .catch((error) => console.error(error));
@@ -62,7 +63,6 @@ const idPrompt = (message) => {
     name: 'id',
     message,
     validate: (answer) => answer.length ? true : 'Required.',
-    transformer: (answer) => formatId(answer),
   };
 };
 
@@ -82,13 +82,6 @@ const labelPrompt = (message) => {
     message,
     validate: (answer) => answer.length ? true : 'Required.',
   };
-};
-
-const formatId = (id) => {
-  return slugify(id.replace(/^\d+/, ''), {
-    lower: true,
-    strict: true,
-  });
 };
 
 module.exports = {

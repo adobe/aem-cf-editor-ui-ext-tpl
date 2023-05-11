@@ -6,8 +6,7 @@ import React from "react";
 import ErrorBoundary from "react-error-boundary";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ExtensionRegistration from "./ExtensionRegistration";
-<%_ const allCustomButtons = extensionManifest.headerMenuButtons || [] -%>
-<%_ allCustomButtons.forEach((button) => { -%>
+<%_ (extensionManifest.headerMenuButtons || []).forEach((button) => { -%>
   <%_ if (button.needsModal) { -%>
     <%_ const buttonComponent = button.id.replace(/-/g, '') + 'Modal' -%>
     <%_ const capitalizedButtonComponent = buttonComponent.charAt(0).toUpperCase() + buttonComponent.slice(1); -%>
@@ -29,7 +28,7 @@ function App() {
           <Route index element={<ExtensionRegistration />} />
           <Route
             exact path="index.html"
-            element={<ExtensionRegistration />} 
+            element={<ExtensionRegistration />}
           />
           <%_ if (extensionManifest.headerMenuButtons) { -%>
             <%_ extensionManifest.headerMenuButtons.forEach((button) => { -%>
@@ -51,7 +50,7 @@ function App() {
           />
             <%_ }) -%>
           <%_ } -%>
-          {/* YOUR CUSTOM ROUTES SHOULD BE HERE */}
+          {/* @todo YOUR CUSTOM ROUTES SHOULD BE HERE */}
         </Routes>
       </ErrorBoundary>
     </Router>

@@ -66,17 +66,16 @@ class WebAssetsReactGenerator extends Generator {
 
     customButtons.forEach((button) => {
       if (button.needsModal) {
-        const componentName = button.id.replace(/-/g, '') + 'Modal';
-        const capitalizedComponentName = componentName.charAt(0).toUpperCase() + componentName.slice(1);
+        const fileName = button.id.replace(/-/g, '') + 'Modal';
+        const capitalizedFileName = fileName.charAt(0).toUpperCase() + fileName.slice(1);
 
         this.fs.copyTpl(
           this.templatePath(`${this.templatesFolder}/modal.ejs`),
           this.destinationPath(
-            `${this.options.extensionOptions.webSrcFolder}/src/components/${capitalizedComponentName}.js`
+            `${this.options.extensionOptions.webSrcFolder}/src/components/${capitalizedFileName}.js`
           ),
           {
             ...this.templateProps,
-            componentName: capitalizedComponentName,
             button,
           }
         );
@@ -88,17 +87,16 @@ class WebAssetsReactGenerator extends Generator {
     const widgets = this.options.extensionOptions.manifest.rte?.widgets || [];
 
     widgets.forEach((widget) => {
-      const componentName = widget.id.replace(/-/g, '') + 'Widget';
-      const capitalizedComponentName = componentName.charAt(0).toUpperCase() + componentName.slice(1);
+      const fileName = widget.id.replace(/-/g, '') + 'Widget';
+      const capitalizedFileName = fileName.charAt(0).toUpperCase() + fileName.slice(1);
 
       this.fs.copyTpl(
         this.templatePath(`${this.templatesFolder}/widget.ejs`),
         this.destinationPath(
-          `${this.options.extensionOptions.webSrcFolder}/src/components/${capitalizedComponentName}.js`
+          `${this.options.extensionOptions.webSrcFolder}/src/components/${capitalizedFileName}.js`
         ),
         {
           ...this.templateProps,
-          componentName: capitalizedComponentName,
           widget,
         }
       );

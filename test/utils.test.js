@@ -10,7 +10,12 @@ governing permissions and limitations under the License.
 */
 
 const fs = require('fs-extra');
-const { readManifest, writeManifest } = require('../src/utils');
+const {
+  readManifest,
+  writeManifest,
+  generateRandomPrefix,
+  generateUniqueWithinListIdFromValue,
+} = require('../src/utils');
 
 describe('readManifest', () => {
   afterEach(() => {
@@ -48,9 +53,9 @@ describe('readManifest', () => {
     });
 
     try {
-      readManifest(manifestPath)
+      readManifest(manifestPath);
     } catch (err) {
-      expect(err.code).toEqual('EACCES')
+      expect(err.code).toEqual('EACCES');
     }
     expect(readJsonSyncMock).toHaveBeenCalledWith(manifestPath, { encoding: 'utf8' });
   });
@@ -63,9 +68,9 @@ describe('readManifest', () => {
     });
 
     try {
-      readManifest(manifestPath)
+      readManifest(manifestPath);
     } catch (err) {
-      expect(err).toBeInstanceOf(Error)
+      expect(err).toBeInstanceOf(Error);
     }
     expect(readJsonSyncMock).toHaveBeenCalledWith(manifestPath, { encoding: 'utf8' });
   });
@@ -84,5 +89,75 @@ describe('writeManifest', () => {
     writeManifest(manifest, manifestPath);
 
     expect(writeJsonSyncMock).toHaveBeenCalledWith(manifestPath, manifest, { spaces: 2 });
+  });
+});
+
+describe('generateRandomPrefix', () => {
+  it('should generate a random prefix of the specified length', () => {
+    const length = 5;
+    const prefix = generateRandomPrefix(length);
+    expect(prefix).toMatch(/[a-z]{5}/);
+  });
+});
+
+describe('generateUniqueWithinListIdFromValue', () => {
+  const list = [
+    { id: 'abc123' },
+  ];
+
+  it('should generate a unique ID from a value', () => {
+    const value = 'My Example @# Value 1';
+    const id = generateUniqueWithinListIdFromValue(value, list);
+    expect(id).toBe('my-example-value-1');
+  });
+
+  it('should add a random prefix if the ID does not contain alphabetic characters', () => {
+    const value = '12345';
+    const id = generateUniqueWithinListIdFromValue(value, list);
+    expect(id).toMatch(/^[a-z]{5}-12345$/);
+  });
+
+  it('should add a random prefix if the ID starts with a numeric value', () => {
+    const value = '7th My Example';
+    const id = generateUniqueWithinListIdFromValue(value, list);
+    expect(id).toMatch(/^[a-z]{5}-7th-my-example$/);
+  });
+
+  it('should add a random prefix if the ID already exists in the list', () => {
+    const value = 'abc123';
+    const id = generateUniqueWithinListIdFromValue(value, list);
+    expect(id).toMatch(/^[a-z]{5}-abc123$/);
+  });
+
+  it('should re-generate ID if the initial value starts with a numeric and the generated value already exists in the list', () => {
+    const value = '123 Example Value'; // start with numeric, should leads to adding of generated prefix
+    const list = [
+      { id: 'abc123' },
+    ];
+
+    list.find = jest.fn()
+      // emulate that value with the generated prefix already exists in the list
+      .mockReturnValueOnce({ id: 'ntosn-123-example-value' })
+      .mockReturnValue(undefined);
+
+    const id = generateUniqueWithinListIdFromValue(value, list);
+    expect(id).toMatch(/^[[a-z]{5}-[a-z]{5}-123-example-value$/);
+  });
+
+  it('should re-generate ID if generated value already exists in the list', () => {
+    const value = 'abc123';
+    const list = [
+      { id: 'abc123' },
+    ];
+
+    list.find = jest.fn()
+      // emulate that initial value already exists in the list, should leads to adding of generated prefix
+      .mockReturnValueOnce({ id: 'ntosn-123-example-value' })
+      // emulate that value with the generated prefix already exists in the list
+      .mockReturnValueOnce({ id: 'qwerty-123-example-value' })
+      .mockReturnValue(undefined);
+
+    const id = generateUniqueWithinListIdFromValue(value, list);
+    expect(id).toMatch(/^[a-z]{5}-[a-z]{5}-abc123$/);
   });
 });

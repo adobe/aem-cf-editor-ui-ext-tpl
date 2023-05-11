@@ -10,6 +10,7 @@ governing permissions and limitations under the License.
 */
 
 const fs = require('fs-extra');
+const slugify = require('slugify');
 
 /**
  * @param manifestPath
@@ -34,7 +35,42 @@ function writeManifest (manifest, manifestPath) {
   fs.writeJsonSync(manifestPath, manifest, { spaces: 2 });
 }
 
+function generateUniqueWithinListIdFromValue (value, list) {
+  let id = slugify(value, {
+    lower: true,
+    strict: true,
+  });
+
+  if (!/^[a-zA-Z]/.test(id)) {
+    id = generateRandomPrefix(5) + '-' + id;
+  }
+
+  if (list) {
+    let matching = list.find(obj => obj.id === id);
+    while (matching !== undefined) {
+      id = generateRandomPrefix(5) + '-' + id;
+      matching = list.find(obj => obj.id === id);
+    }
+  }
+
+  return id;
+}
+
+function generateRandomPrefix (length) {
+  const characters = 'abcdefghijklmnopqrstuvwxyz';
+  const randomString = [];
+
+  for (let i = 0; i < length; i++) {
+    const character = characters.charAt(Math.floor(Math.random() * characters.length));
+    randomString.push(character);
+  }
+
+  return randomString.join('');
+}
+
 module.exports = {
   readManifest,
   writeManifest,
+  generateRandomPrefix,
+  generateUniqueWithinListIdFromValue,
 };
