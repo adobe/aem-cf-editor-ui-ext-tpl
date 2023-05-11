@@ -10,7 +10,7 @@ governing permissions and limitations under the License.
 */
 
 const inquirer = require('inquirer');
-const slugify = require('slugify');
+const { generateUniqueWithinListIdFromValue } = require('../utils');
 
 const headerMenuButtonPrompts = (manifest) => {
   const questions = [labelPrompt(), modalPrompt()];
@@ -18,11 +18,8 @@ const headerMenuButtonPrompts = (manifest) => {
   return inquirer
     .prompt(questions)
     .then((answers) => {
-      answers.id = slugify(answers.label.replace(/^\d+/, ''), {
-        lower: true,
-        strict: true,
-      });
       manifest.headerMenuButtons = manifest.headerMenuButtons || [];
+      answers.id = generateUniqueWithinListIdFromValue(answers.label, manifest.headerMenuButtons);
       manifest.headerMenuButtons.push(answers);
     })
     .catch((error) => {
@@ -30,18 +27,12 @@ const headerMenuButtonPrompts = (manifest) => {
     });
 };
 
-const labelPrompt = () => {
+const labelPrompt = (manifest) => {
   return {
     type: 'input',
     name: 'label',
     message: 'Please provide label name for the button:',
-    validate (answer) {
-      if (!answer.length) {
-        return 'Required.';
-      }
-
-      return true;
-    },
+    validate: (value) => value.length ? true : 'Required.',
   };
 };
 

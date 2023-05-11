@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 
 const inquirer = require('inquirer');
 const slugify = require('slugify');
+const { generateUniqueWithinListIdFromValue } = require('../utils');
 
 const toolbarButtonPrompts = (manifest) => {
   const idMessage = 'Please provide ID for the toolbar button (must be unique across all extensions, consider' +
@@ -33,10 +34,9 @@ const widgetPrompts = (manifest) => {
   return inquirer
     .prompt([labelPrompt(labelMessage)])
     .then((answers) => {
-      answers.id = formatId(answers.label);
-
       manifest.rte = manifest.rte || {};
       manifest.rte.widgets = manifest.rte.widgets || [];
+      answers.id = generateUniqueWithinListIdFromValue(answers.label, manifest.headerMenuButtons);
       manifest.rte.widgets.push(answers);
     })
     .catch((error) => console.error(error));

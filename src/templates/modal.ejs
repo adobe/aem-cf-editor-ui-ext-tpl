@@ -16,7 +16,7 @@ import {
 
 import { extensionId } from "./Constants";
 
-export default function <%- componentName %> () {
+export default function () {
   const [guestConnection, setGuestConnection] = useState();
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function <%- componentName %> () {
     <Provider theme={defaultTheme} colorScheme='light'>
       <Content width="100%">
         <Text>Your modal content for "<%- button.label %>"</Text>
-        
+
         <Flex width="100%" justifyContent="end" alignItems="center" marginTop="size-400">
           <ButtonGroup align="end">
             <Button variant="primary" onClick={onCloseHandler}>Close</Button>
