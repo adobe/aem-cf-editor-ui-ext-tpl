@@ -41,6 +41,11 @@ class WebAssetsReactGenerator extends Generator {
       this.destinationPath(this.options.extensionOptions.webSrcFolder),
       this.templateProps
     );
+
+    this.fs.copyTpl(
+      this.templatePath(`${this.templatesFolder}/hooks/*`),
+      this.destinationPath('./hooks')
+    )
   }
 
   generateAppRoute () {
