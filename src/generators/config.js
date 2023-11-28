@@ -55,6 +55,15 @@ class ConfigGenerator extends Generator {
       'web',
       path.relative(this.options.extensionOptions.rootFolder, this.options.extensionOptions.webSrcFolder)
     );
+
+    // add hooks path
+    utils.writeKeyYAMLConfig(
+      this,
+      this.options.extensionOptions.configPath,
+      'hooks', {
+        'post-app-deploy': './hooks/post-deploy.js'
+      }
+    );
   }
 }
 
