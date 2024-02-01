@@ -16,6 +16,7 @@ const path = require('path');
 const { readManifest } = require('./utils');
 const headerMenuButtonPrompts = require('./prompts/header-menu');
 const { toolbarButtonPrompts, badgePrompts, widgetPrompts } = require('./prompts/rte');
+const { customField } = require('./prompts/custom-field');
 
 const DEMO_MANIFEST_PATH = path.join(__dirname, './manifests/demo-extension-manifest.json');
 
@@ -116,6 +117,12 @@ const promptMainMenu = (manifest) => {
       name: 'Add Rich Text Editor (RTE) Toolbar Badge',
       value: badgePrompts.bind(this, manifest),
     },
+
+    {
+      name: 'Add custom rendering for a form element',
+      value: customField.bind(this, manifest),
+    },
+
     new inquirer.Separator(),
     {
       name: "I'm done",

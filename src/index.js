@@ -46,6 +46,7 @@ class MainGenerator extends Generator {
     super(args, opts);
 
     this.option('skip-prompt', { default: false });
+    this.option('skip-install', { default: true });
     this.option('extension-manifest', { type: Object, default: undefined });
   }
 
