@@ -22,8 +22,14 @@ class ConfigGenerator extends Generator {
   }
 
   writing () {
+    this.generateDefaultMetadata();
     this.generateAppConfig();
     this.generateExtensionConfig();
+
+  }
+
+  generateDefaultMetadata () {
+    this.fs.writeJSON('src/app-metadata.json', {});
   }
 
   generateAppConfig () {
@@ -61,6 +67,8 @@ class ConfigGenerator extends Generator {
       this,
       this.options.extensionOptions.configPath,
       'hooks', {
+        'pre-app-run': 'npm run transform:yaml-to-json',
+        'pre-app-build': 'npm run transform:yaml-to-json',
         'post-app-deploy': './hooks/post-deploy.js'
       }
     );
