@@ -72,7 +72,7 @@ class DependenciesGenerator extends Generator {
     utils.addPkgScript(
       this,
       {
-        "transform:yaml-to-json": "node node_modules/@adobe/uix-guest/scripts/node node_modules/@adobe/uix-guest/scripts/generate-metadata.js"
+        "transform:yaml-to-json": "node node_modules/@adobe/uix-guest/scripts/generate-metadata.js"
       }
     );
   }
