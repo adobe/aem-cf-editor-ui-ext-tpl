@@ -22,6 +22,7 @@ class DependenciesGenerator extends Generator {
   writing () {
     this.addBaseDependencies();
     this.addDevDependencies();
+    this.addPackageScript();
   }
 
   /**
@@ -34,7 +35,7 @@ class DependenciesGenerator extends Generator {
         '@adobe/aio-sdk': constants.commonDependencyVersions['@adobe/aio-sdk'],
         '@adobe/exc-app': '^0.2.21',
         '@adobe/react-spectrum': '^3.4.0',
-        '@adobe/uix-guest': '^0.8.0',
+        '@adobe/uix-guest': '^0.10.0',
         '@react-spectrum/list': '^3.0.0-rc.0',
         '@spectrum-icons/workflow': '^3.2.0',
         'chalk': '^4',
@@ -60,8 +61,19 @@ class DependenciesGenerator extends Generator {
         '@babel/preset-env': '^7.8.7',
         '@openwhisk/wskdebug': '^1.3.0',
         jest: '^27.2.4',
+        "ajv": "^8.12.0",
+        "js-yaml": "^4.1.0"
       },
       true
+    );
+  }
+
+  addPackageScript () {
+    utils.addPkgScript(
+      this,
+      {
+        "transform:yaml-to-json": "node node_modules/@adobe/uix-guest/scripts/generate-metadata.js"
+      }
     );
   }
 }

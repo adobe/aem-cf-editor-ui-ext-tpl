@@ -22,8 +22,14 @@ class ConfigGenerator extends Generator {
   }
 
   writing () {
+    this.generateDefaultMetadata();
     this.generateAppConfig();
     this.generateExtensionConfig();
+
+  }
+
+  generateDefaultMetadata () {
+    this.fs.writeJSON('src/app-metadata.json', {});
   }
 
   generateAppConfig () {
@@ -61,6 +67,8 @@ class ConfigGenerator extends Generator {
       this,
       this.options.extensionOptions.configPath,
       'hooks', {
+        'pre-app-run': 'node node_modules/@adobe/uix-guest/scripts/generate-metadata.js',
+        'pre-app-build': 'node node_modules/@adobe/uix-guest/scripts/generate-metadata.js',
         'post-app-deploy': './hooks/post-deploy.js'
       }
     );
